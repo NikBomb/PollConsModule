@@ -52,4 +52,15 @@ let ``transitionfromReady returns correct result when it shouldn't idle``
 
     StoppedState =! actual 
 
+[<Property>]
+let ``transitionfrom Ready should return correct result when polling no message``
+    (r : ReadyData)
+    (mh : Timed<unit>) =
 
+    let shouldPoll _ = true
+    let poll _ = mh |> Untimed.withResult None
+
+    let actual : State = transitionFromReady shouldPoll poll r
+    
+    let expected = mh |> Untimed.withResult r.Result |> NoMessageState 
+    expected =! actual  
