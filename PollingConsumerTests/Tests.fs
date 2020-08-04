@@ -37,3 +37,19 @@ let ``transitionFromNoMessage returns correct result when it does not idle``
        StoppedState
    
    expected =! actual
+
+[<Property>]
+
+let ``transitionfromReady returns correct result when it shouldn't idle``
+    (r : ReadyData)
+    (mh : Timed<MessageHandler option>) = 
+
+    let shouldPoll _= false
+    let poll _ = mh
+
+    let actual : State = 
+        transitionFromReady shouldPoll poll r
+
+    StoppedState =! actual 
+
+
