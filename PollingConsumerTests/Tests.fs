@@ -64,3 +64,19 @@ let ``transitionfrom Ready should return correct result when polling no message`
     
     let expected = mh |> Untimed.withResult r.Result |> NoMessageState 
     expected =! actual  
+
+
+[<Property>]
+let ``transitionfromReady returns correct result when polling``
+    (r : ReadyData)
+    (mh : Timed<MessageHandler>) = 
+    
+    let shouldPoll _ = true
+    let poll _ = mh |> Untimed.withResult (Some mh.Result)
+
+    let actual = transitionFromReady shouldPoll poll r 
+    let expected = 
+        mh 
+        |> Untimed.withResult (r.Result, mh.Result)
+        |> ReceivedMessageState 
+    expected =! actual 
